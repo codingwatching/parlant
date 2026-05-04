@@ -715,7 +715,17 @@ class JackalEmbedding(ParlantCloudEmbedder):
         return 1536
 
 
-class ParlantCloudService(NLPService, Indexer):
+class ParlantCloudIndexer(Indexer):
+    @override
+    async def index(
+        self,
+        payload: Mapping[str, Mapping[str, IndexRequest]],
+        progress_report: ProgressReport,
+    ) -> None:
+        return
+
+
+class ParlantCloudService(NLPService):
     @staticmethod
     def verify_environment() -> str | None:
         """Returns an error message if the environment is not set up correctly."""
@@ -737,28 +747,9 @@ Get an API key for Parlant Cloud by signing up at https://www.parlant.io."""
         tracer: Tracer,
         meter: Meter,
         health_reporter: HealthReporter,
-        agent_store: AgentStore,
-        guideline_store: GuidelineStore,
-        journey_store: JourneyStore,
-        relationship_store: RelationshipStore,
-        glossary_store: GlossaryStore,
-        context_variable_store: ContextVariableStore,
-        canned_response_store: CannedResponseStore,
-        service_registry: ServiceRegistry,
         model_tier: GenerationModelTier | None = None,
         model_role: ModelRole | None = None,
     ) -> None:
-        super().__init__(
-            agent_store=agent_store,
-            guideline_store=guideline_store,
-            journey_store=journey_store,
-            relationship_store=relationship_store,
-            glossary_store=glossary_store,
-            context_variable_store=context_variable_store,
-            canned_response_store=canned_response_store,
-            service_registry=service_registry,
-        )
-
         self._logger = logger
         self._tracer = tracer
         self._meter = meter
@@ -773,14 +764,6 @@ Get an API key for Parlant Cloud by signing up at https://www.parlant.io."""
         )
 
         self._logger.info("Initialized ParlantCloudService")
-
-    @override
-    async def index(
-        self,
-        payload: Mapping[str, Mapping[str, IndexRequest]],
-        progress_report: ProgressReport,
-    ) -> None:
-        return
 
     @property
     @override
